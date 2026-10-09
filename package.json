@@ -1,0 +1,52 @@
+{
+  "name": "projectpulse",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Client portal and project dashboard: teams track projects and milestones, clients follow progress in real time.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.9"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "user:create": "tsx scripts/create-user.ts",
+    "postinstall": "prisma generate",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "bcryptjs": "^3.0.3",
+    "next": "^16.4.0",
+    "next-auth": "5.0.0-beta.32",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^20.19.43",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "dotenv": "^18.0.6",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.0",
+    "postcss": "^8.5.29",
+    "prettier": "^3.9.9",
+    "prisma": "^6.19.3",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11"
+  },
+  "overrides": {
+    "deepmerge-ts": "^8.0.2"
+  }
+}

@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+}
+
+enum ActivityType {
+  PROJECT_CREATED
+  STATUS_CHANGED
+  MILESTONE_COMPLETED
+  MILESTONE_REOPENED
+  NOTE_ADDED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         Role
+  createdAt    DateTime @default(now())
+
+  projects   Project[]  @relation("ProjectClient")
+  activities Activity[]
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  status      ProjectStatus @default(PLANNING)
+  clientId    String
+  // Date-only values (stored at UTC midnight).
+  startDate   DateTime?     @db.Date
+  dueDate     DateTime?     @db.Date
+  // Archived projects are hidden from clients and from the default admin list.
+  archivedAt  DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  client     User        @relation("ProjectClient", fields: [clientId], references: [id], onDelete: Restrict)
+  milestones Milestone[]
+  activities Activity[]
+
+  @@index([clientId])
+  @@index([status])
+}
+
+model Milestone {
+  id          String    @id @default(cuid())
+  projectId   String
+  title       String
+  dueDate     DateTime? @db.Date
+  completedAt DateTime?
+  // Position within the project, ascending.
+  order       Int
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, order])
+}
+
+model Activity {
+  id        String       @id @default(cuid())
+  projectId String
+  type      ActivityType
+  message   String
+  createdAt DateTime     @default(now())
+  actorId   String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  actor   User    @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([projectId, createdAt])
+}
